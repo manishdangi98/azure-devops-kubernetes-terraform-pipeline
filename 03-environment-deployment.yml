@@ -42,4 +42,4 @@ stages:
         runOnce:
           deploy:
             steps:
-              - bash: echo deploy to dev
+              - bash: echo deploy to QA
