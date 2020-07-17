@@ -9,9 +9,9 @@ variables:
   #"$(Build.BuildId)"
 
 stages:
-# Stage 1
-# Build Docker Image
-# Publish the k8s Files
+  # Stage 1
+  # Build Docker Image
+  # Publish the k8s Files
   - stage: Build
     displayName: Build image
     jobs:
@@ -30,19 +30,18 @@ stages:
           #     tags: "$(tag)"
           - task: CopyFiles@2
             inputs:
-              SourceFolder: '$(System.DefaultWorkingDirectory)'
-              Contents: '**/*.yaml'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)'
+              SourceFolder: "$(System.DefaultWorkingDirectory)"
+              Contents: "**/*.yaml"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)"
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'manifests'
-              publishLocation: 'Container'
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "manifests"
+              publishLocation: "Container"
 
-
-# Stage 2 
-# Download the k8s Files
-# Deploy to k8s Cluster with Image
+  # Stage 2
+  # Download the k8s Files
+  # Deploy to k8s Cluster with Image
   - stage: Deploy
     displayName: Deploy
     jobs:
@@ -51,16 +50,16 @@ stages:
         pool:
           vmImage: "ubuntu-latest"
         steps:
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            buildType: 'current'
-            artifactName: 'manifests'
-            itemPattern: '**/*.yaml'
-            targetPath: '$(System.ArtifactsDirectory)'
-        - task: KubernetesManifest@0
-          inputs:
-            action: 'deploy'
-            kubernetesServiceConnection: 'azure-kubernetes-connection'
-            namespace: 'default'
-            manifests: '$(System.ArtifactsDirectory)/deployment.yaml'
-            containers: 'manish98dangi/currency-exchange-devops:$(tag)'
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: "current"
+              artifactName: "manifests"
+              itemPattern: "**/*.yaml"
+              targetPath: "$(System.ArtifactsDirectory)"
+          - task: KubernetesManifest@0
+            inputs:
+              action: "deploy"
+              kubernetesServiceConnection: "azure-kubernetes-connection"
+              namespace: "default"
+              manifests: "$(System.ArtifactsDirectory)/configuration/kubernetes/deployment.yaml"
+              containers: "manish98dangi/currency-exchange-devops:$(tag)"
